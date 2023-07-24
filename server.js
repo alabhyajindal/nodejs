@@ -3,6 +3,7 @@ const express = require('express')
 const dotenv = require('dotenv')
 const { Pool, Client } = require('pg')
 
+const PORT = process.env.PORT
 dotenv.config()
 
 // pg
