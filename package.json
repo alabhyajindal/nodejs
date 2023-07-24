@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "nodemon server.js",
-    "prod": "node server.js"
+    "start": "node server.js"
   },
   "author": "Alabhya Jindal",
   "license": "ISC",
