@@ -3,8 +3,8 @@ const express = require('express')
 const dotenv = require('dotenv')
 const { Pool, Client } = require('pg')
 
-const PORT = process.env.PORT
 dotenv.config()
+const PORT = process.env.PORT
 
 // pg
 const connectionString = process.env.CONNECTION_STRING
@@ -53,4 +53,5 @@ app.route('/:username').get(async (req, res) => {
   }
 })
 
-app.listen(`0.0.0.0:${PORT}`)
+app.listen(PORT)
+// app.listen(`0.0.0.0:${PORT}`)
