@@ -4,7 +4,8 @@
   "description": "App to record travels",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon server.js"
+    "dev": "nodemon server.js",
+    "prod": "node server.js"
   },
   "author": "Alabhya Jindal",
   "license": "ISC",
