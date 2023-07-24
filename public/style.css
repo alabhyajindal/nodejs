@@ -3,6 +3,11 @@ body {
   padding: 0;
 }
 
+button {
+  padding: 4px 16px;
+  cursor: pointer;
+}
+
 #map {
   position: absolute;
   top: 0;
@@ -20,11 +25,6 @@ body {
 
 .last-marker {
   background-color: #44ccff;
-}
-
-button {
-  padding: 4px 16px;
-  cursor: pointer;
 }
 
 #edit {
