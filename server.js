@@ -53,5 +53,4 @@ app.route('/:username').get(async (req, res) => {
   }
 })
 
-app.listen(PORT)
-// app.listen(`0.0.0.0:${PORT}`)
+app.listen(PORT, '0.0.0.0')
