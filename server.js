@@ -27,6 +27,7 @@ async function getGeoJSON(username) {
 
 const app = express()
 
+app.set('view engine', 'pug')
 app.use(express.static('public'))
 
 const htmlFile = fs.readFileSync(`${__dirname}/index.html`, 'utf-8')
@@ -35,7 +36,7 @@ let jsFile = fs.readFileSync(`${__dirname}/script.js`, 'utf-8')
 jsFile = `mapboxgl.accessToken = '${process.env.MAPBOX_TOKEN}'\n` + jsFile
 
 app.route('/').get((req, res) => {
-  res.send('<h1>Welcome</h1>')
+  res.status(200).render('base')
 })
 
 app.route('/:username').get(async (req, res) => {
@@ -49,7 +50,7 @@ app.route('/:username').get(async (req, res) => {
     )
     res.status(200).send(withScript)
   } else {
-    res.status(400).send('fuck you')
+    res.status(400).send('Error')
   }
 })
 
