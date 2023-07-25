@@ -63,9 +63,17 @@ app
     <input value='tenzin'/>
     <button id='check'>Check</button>
     <div id='message'>
+      <p></p>
+      <button id='submit' style='display:none'>Submit</button>
     </div>
   </div>
   <script>
+    const check = document.querySelector('#check')
+    const input = document.querySelector('input')
+    const message = document.querySelector('#message')
+    const p = document.querySelector('p')
+    const submit = document.querySelector('#submit')
+
     async function checkUsername() {
       const res = await fetch('${requestURI}', {
       method: 'POST', 
@@ -75,13 +83,23 @@ app
       },
     })
       const body = await res.json()
-      console.log(body);
       return body
     }
-    const check = document.querySelector('#check')
-    const input = document.querySelector('input')
-    check.addEventListener('click', (e) => {
-      checkUsername()
+
+    function displayMessage(isAvailable) {
+      if (isAvailable) {
+        p.textContent = 'Username is available'
+        submit.style.display = 'block'
+      } else {
+        p.textContent = 'Username is not available'
+        submit.style.display = 'none'
+      }
+    }
+
+    check.addEventListener('click', async (e) => {
+      const res = await checkUsername()
+      console.log(res);
+      displayMessage(res.data.available)
     })
   </script>
   `)
@@ -113,7 +131,7 @@ app.route('/api/profiles').post(async (req, res) => {
       .status(200)
       .send({ status: 'success', data: { available: checkRes.available } })
   } else {
-    res.status(500).send({ status: 'error' })
+    res.status(500).send({ status: 'error', data: { available: false } })
   }
 })
 
