@@ -2,14 +2,14 @@ const fs = require('fs')
 const dotenv = require('dotenv')
 const express = require('express')
 const { OAuth2Client } = require('google-auth-library')
-const { getGeoJSON, addUser } = require('./models/profiles')
+const { getGeoJSON, addUser, checkUsername } = require('./models/profiles')
 
 dotenv.config()
+const app = express()
 const client = new OAuth2Client()
 
-const app = express()
-app.use(express.urlencoded({ extended: true }))
 app.use(express.json())
+app.use(express.urlencoded({ extended: false }))
 app.use(express.static('public'))
 
 const htmlFile = fs.readFileSync(`${__dirname}/index.html`, 'utf-8')
@@ -54,21 +54,34 @@ async function verify(token) {
 app
   .route('/welcome')
   .post((req, res) => {
-    console.log(req.body)
     const token = req.body.credential
     const userDetails = verify(token).catch(console.error)
+    const requestURI = process.env.URI + '/api/profiles'
     res.status(200).send(`
   <div>
     <h1>Choose a username</h1>
-    <input />
-    <button>Check</button>
-    <p></p>
+    <input value='tenzin'/>
+    <button id='check'>Check</button>
+    <div id='message'>
+    </div>
   </div>
   <script>
-    const button = document.querySelector('button')
+    async function checkUsername() {
+      const res = await fetch('${requestURI}', {
+      method: 'POST', 
+      body: JSON.stringify({username: input.value}),
+      headers: {
+        'Content-type': 'application/json',
+      },
+    })
+      const body = await res.json()
+      console.log(body);
+      return body
+    }
+    const check = document.querySelector('#check')
     const input = document.querySelector('input')
-    button.addEventListener('click', (e) => {
-      console.log(input.value)
+    check.addEventListener('click', (e) => {
+      checkUsername()
     })
   </script>
   `)
@@ -89,6 +102,18 @@ app.route('/:username').get(async (req, res) => {
     res.status(200).send(withScript)
   } else {
     res.status(400).send('Error')
+  }
+})
+
+app.route('/api/profiles').post(async (req, res) => {
+  console.log(req.body)
+  const checkRes = await checkUsername(req.body.username)
+  if (checkRes.status === 'success') {
+    res
+      .status(200)
+      .send({ status: 'success', data: { available: checkRes.available } })
+  } else {
+    res.status(500).send({ status: 'error' })
   }
 })
 

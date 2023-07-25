@@ -31,3 +31,23 @@ module.exports.addUser = async (values) => {
     console.error(err)
   }
 }
+
+module.exports.checkUsername = async (username) => {
+  const pool = new Pool({
+    connectionString: process.env.CONNECTION_STRING,
+  })
+  const text = 'SELECT * FROM profiles WHERE username = $1;'
+  const values = [username]
+
+  try {
+    const res = await pool.query(text, values)
+    if (res.rows.length === 0) {
+      return { status: 'success', available: true }
+    } else {
+      return { status: 'success', available: false }
+    }
+  } catch (err) {
+    console.error(err)
+    return { status: 'error' }
+  }
+}
