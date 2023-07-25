@@ -16,36 +16,15 @@ module.exports.getGeoJSON = async (username) => {
   }
 }
 
-module.exports.upsertUser = async () => {
+module.exports.addUser = async (values) => {
   const pool = new Pool({
     connectionString: process.env.CONNECTION_STRING,
   })
-
-  const text =
-    'INSERT INTO profiles(username, geojson) VALUES($1, $2) RETURNING *'
-  const values = [
-    'alabhya',
-    {
-      type: 'FeatureCollection',
-      features: [
-        {
-          type: 'Feature',
-          geometry: {
-            type: 'Point',
-            coordinates: [91.753943, 26.180598],
-          },
-        },
-        {
-          type: 'Feature',
-          geometry: {
-            type: 'Point',
-            coordinates: [77.5913, 12.97912],
-          },
-        },
-      ],
-    },
-  ]
-
+  const text = `INSERT INTO profiles(email, name, username, geojson) 
+  VALUES($1, $2, $3, $4)
+  ON CONFLICT (email) 
+  DO NOTHING
+  `
   const res = await pool.query(text, values)
   console.log(res.rows[0])
 }

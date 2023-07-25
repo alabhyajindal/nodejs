@@ -2,10 +2,9 @@ const fs = require('fs')
 const dotenv = require('dotenv')
 const express = require('express')
 const { OAuth2Client } = require('google-auth-library')
-const { getGeoJSON, upsertUser } = require('./models/profiles')
+const { getGeoJSON, addUser } = require('./models/profiles')
 
 dotenv.config()
-
 const client = new OAuth2Client()
 
 const app = express()
@@ -14,12 +13,10 @@ app.use(express.json())
 app.use(express.static('public'))
 
 const htmlFile = fs.readFileSync(`${__dirname}/index.html`, 'utf-8')
-
 let jsFile = fs.readFileSync(`${__dirname}/script.js`, 'utf-8')
 jsFile = `mapboxgl.accessToken = '${process.env.MAPBOX_TOKEN}'\n` + jsFile
 
 app.route('/').get((req, res) => {
-  // res.status(200).render('base')
   res.status(200).send(`
   <script src="https://accounts.google.com/gsi/client" async></script>
   <div>
@@ -67,6 +64,8 @@ async function verify(token) {
   const payload = ticket.getPayload()
   const userid = payload['sub']
   console.log(payload)
+  const { email, name } = payload
+  addUser([email, name, null, null])
 }
 
 app.route('/welcome').post((req, res) => {
