@@ -32,6 +32,21 @@ module.exports.addUser = async (values) => {
   }
 }
 
+module.exports.getUsername = async (email) => {
+  const pool = new Pool({
+    connectionString: process.env.CONNECTION_STRING,
+  })
+  const text = 'SELECT * FROM profiles WHERE email = $1;'
+  const values = [email]
+
+  try {
+    const res = await pool.query(text, values)
+    return { status: 'success', username: res.rows[0].username }
+  } catch (err) {
+    console.error(err)
+    return { status: 'error' }
+  }
+}
 module.exports.checkUsername = async (username) => {
   const pool = new Pool({
     connectionString: process.env.CONNECTION_STRING,

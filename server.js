@@ -7,6 +7,7 @@ const {
   addUser,
   checkUsername,
   submitUsername,
+  getUsername,
 } = require('./models/profiles')
 
 dotenv.config()
@@ -30,7 +31,7 @@ app.route('/').get((req, res) => {
   data-client_id="259494879046-t6ejuqrlbmgdlqotrkes0fgev4iak86e.apps.googleusercontent.com"
   data-context="signin"
   data-ux_mode="popup"
-  data-login_uri="${process.env.URI}/welcome"
+  data-login_uri="${process.env.URI}/redirect"
   data-auto_prompt="false">
 </div>
 
@@ -56,13 +57,21 @@ async function verify(token) {
   return payload
 }
 
-app
-  .route('/welcome')
-  .post(async (req, res) => {
-    const token = req.body.credential
-    const userDetails = await verify(token)
-    const requestURI = process.env.URI
-    res.status(200).send(`
+app.route('/redirect').post(async (req, res) => {
+  const token = req.body.credential
+  const userDetails = await verify(token)
+  const response = await getUsername(userDetails.email)
+  if (!response.username) {
+    res.redirect('/welcome')
+  } else {
+    res.redirect(`/${response.username}`)
+  }
+})
+
+app.route('/welcome').get(async (req, res) => {
+  const email = ''
+  const requestURI = process.env.URI
+  res.status(200).send(`
   <div>
     <h1>Choose a username</h1>
     <input />
@@ -105,7 +114,7 @@ app
     const res = await fetch('${requestURI}/api/profiles/submit', {
       method: 'POST', 
       body: JSON.stringify({
-        email: '${userDetails.email}',
+        email: '${email}',
         username: input.value
       }),
       headers: {
@@ -129,10 +138,7 @@ app
     })
   </script>
   `)
-  })
-  .get((req, res) => {
-    res.status(405).send('Method not allowed')
-  })
+})
 
 app.route('/:username').get(async (req, res) => {
   const { username } = req.params
