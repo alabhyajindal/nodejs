@@ -53,18 +53,17 @@ module.exports.checkUsername = async (username) => {
 }
 
 module.exports.submitUsername = async (values) => {
-  console.log(values)
   const pool = new Pool({
     connectionString: process.env.CONNECTION_STRING,
   })
   const text = `UPDATE profiles
-  SET username = $1
-  WHERE email = $2
+  SET username = $1,
+  geojson = $2
+  WHERE email = $3;
   `
 
   try {
     const res = await pool.query(text, values)
-    console.log(res.rows)
     return { status: 'success' }
   } catch (err) {
     console.error(err)

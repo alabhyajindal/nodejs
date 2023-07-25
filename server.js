@@ -60,13 +60,12 @@ app
   .route('/welcome')
   .post(async (req, res) => {
     const token = req.body.credential
-    const userDetails = await verify(token).catch(console.error)
-    console.log(userDetails)
+    const userDetails = await verify(token)
     const requestURI = process.env.URI
     res.status(200).send(`
   <div>
     <h1>Choose a username</h1>
-    <input value='tenzin'/>
+    <input />
     <button id='check'>Check</button>
     <div id='message'>
       <p></p>
@@ -114,7 +113,6 @@ app
       },
     })
       const body = await res.json()
-      console.log(body);
       return body
     }
 
@@ -125,6 +123,9 @@ app
 
     submit.addEventListener('click', async (e) => {
       const res = await submitUsername()
+      if (res.status === 'success') {
+        window.location.href = '${requestURI}' + '/' + input.value
+      }
     })
   </script>
   `)
@@ -149,7 +150,6 @@ app.route('/:username').get(async (req, res) => {
 })
 
 app.route('/api/profiles/check').post(async (req, res) => {
-  console.log(req.body)
   const checkRes = await checkUsername(req.body.username)
   if (checkRes.status === 'success') {
     res
@@ -161,8 +161,14 @@ app.route('/api/profiles/check').post(async (req, res) => {
 })
 
 app.route('/api/profiles/submit').post(async (req, res) => {
-  console.log(req.body)
-  const checkRes = await submitUsername([req.body.username, req.body.email])
+  const checkRes = await submitUsername([
+    req.body.username,
+    {
+      type: 'FeatureCollection',
+      features: [],
+    },
+    req.body.email,
+  ])
   if (checkRes.status === 'success') {
     res.status(201).send({ status: 'success' })
   } else {
