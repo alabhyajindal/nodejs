@@ -25,6 +25,9 @@ module.exports.addUser = async (values) => {
   ON CONFLICT (email) 
   DO NOTHING
   `
-  const res = await pool.query(text, values)
-  console.log(res.rows[0])
+  try {
+    await pool.query(text, values)
+  } catch (err) {
+    console.error(err)
+  }
 }

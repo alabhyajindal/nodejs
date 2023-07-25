@@ -41,6 +41,42 @@ app.route('/').get((req, res) => {
 `)
 })
 
+async function verify(token) {
+  const ticket = await client.verifyIdToken({
+    idToken: token,
+    audience: process.env.OAUTH_CLIENT_ID,
+  })
+  const payload = ticket.getPayload()
+  addUser([payload.email, payload.name, null, null])
+  return payload
+}
+
+app
+  .route('/welcome')
+  .post((req, res) => {
+    console.log(req.body)
+    const token = req.body.credential
+    const userDetails = verify(token).catch(console.error)
+    res.status(200).send(`
+  <div>
+    <h1>Choose a username</h1>
+    <input />
+    <button>Check</button>
+    <p></p>
+  </div>
+  <script>
+    const button = document.querySelector('button')
+    const input = document.querySelector('input')
+    button.addEventListener('click', (e) => {
+      console.log(input.value)
+    })
+  </script>
+  `)
+  })
+  .get((req, res) => {
+    res.status(405).send('Method not allowed')
+  })
+
 app.route('/:username').get(async (req, res) => {
   const { username } = req.params
   if (username !== 'favicon') {
@@ -54,25 +90,6 @@ app.route('/:username').get(async (req, res) => {
   } else {
     res.status(400).send('Error')
   }
-})
-
-async function verify(token) {
-  const ticket = await client.verifyIdToken({
-    idToken: token,
-    audience: process.env.OAUTH_CLIENT_ID,
-  })
-  const payload = ticket.getPayload()
-  const userid = payload['sub']
-  console.log(payload)
-  const { email, name } = payload
-  addUser([email, name, null, null])
-}
-
-app.route('/welcome').post((req, res) => {
-  console.log(req.body)
-  const token = req.body.credential
-  verify(token).catch(console.error)
-  res.status(200).send({ 'Another one': 'DJ Khaled' })
 })
 
 app.listen(process.env.PORT, '0.0.0.0')
