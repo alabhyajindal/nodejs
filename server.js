@@ -2,7 +2,12 @@ const fs = require('fs')
 const dotenv = require('dotenv')
 const express = require('express')
 const { OAuth2Client } = require('google-auth-library')
-const { getGeoJSON, addUser, checkUsername } = require('./models/profiles')
+const {
+  getGeoJSON,
+  addUser,
+  checkUsername,
+  submitUsername,
+} = require('./models/profiles')
 
 dotenv.config()
 const app = express()
@@ -53,10 +58,11 @@ async function verify(token) {
 
 app
   .route('/welcome')
-  .post((req, res) => {
+  .post(async (req, res) => {
     const token = req.body.credential
-    const userDetails = verify(token).catch(console.error)
-    const requestURI = process.env.URI + '/api/profiles'
+    const userDetails = await verify(token).catch(console.error)
+    console.log(userDetails)
+    const requestURI = process.env.URI
     res.status(200).send(`
   <div>
     <h1>Choose a username</h1>
@@ -75,7 +81,7 @@ app
     const submit = document.querySelector('#submit')
 
     async function checkUsername() {
-      const res = await fetch('${requestURI}', {
+      const res = await fetch('${requestURI}/api/profiles/check', {
       method: 'POST', 
       body: JSON.stringify({username: input.value}),
       headers: {
@@ -96,10 +102,29 @@ app
       }
     }
 
+    async function submitUsername() {
+    const res = await fetch('${requestURI}/api/profiles/submit', {
+      method: 'POST', 
+      body: JSON.stringify({
+        email: '${userDetails.email}',
+        username: input.value
+      }),
+      headers: {
+        'Content-type': 'application/json',
+      },
+    })
+      const body = await res.json()
+      console.log(body);
+      return body
+    }
+
     check.addEventListener('click', async (e) => {
       const res = await checkUsername()
-      console.log(res);
       displayMessage(res.data.available)
+    })
+
+    submit.addEventListener('click', async (e) => {
+      const res = await submitUsername()
     })
   </script>
   `)
@@ -123,7 +148,7 @@ app.route('/:username').get(async (req, res) => {
   }
 })
 
-app.route('/api/profiles').post(async (req, res) => {
+app.route('/api/profiles/check').post(async (req, res) => {
   console.log(req.body)
   const checkRes = await checkUsername(req.body.username)
   if (checkRes.status === 'success') {
@@ -132,6 +157,16 @@ app.route('/api/profiles').post(async (req, res) => {
       .send({ status: 'success', data: { available: checkRes.available } })
   } else {
     res.status(500).send({ status: 'error', data: { available: false } })
+  }
+})
+
+app.route('/api/profiles/submit').post(async (req, res) => {
+  console.log(req.body)
+  const checkRes = await submitUsername([req.body.username, req.body.email])
+  if (checkRes.status === 'success') {
+    res.status(201).send({ status: 'success' })
+  } else {
+    res.status(500).send({ status: 'error' })
   }
 })
 
