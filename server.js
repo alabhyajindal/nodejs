@@ -2,9 +2,11 @@ const fs = require('fs')
 const express = require('express')
 const dotenv = require('dotenv')
 const { Pool, Client } = require('pg')
+const { OAuth2Client } = require('google-auth-library')
+
+const client = new OAuth2Client()
 
 dotenv.config()
-const PORT = process.env.PORT
 
 // pg
 const connectionString = process.env.CONNECTION_STRING
@@ -26,8 +28,8 @@ async function getGeoJSON(username) {
 // pgend
 
 const app = express()
-
-// app.set('view engine', 'pug')
+app.use(express.urlencoded({ extended: true }))
+app.use(express.json())
 app.use(express.static('public'))
 
 const htmlFile = fs.readFileSync(`${__dirname}/index.html`, 'utf-8')
@@ -45,7 +47,7 @@ app.route('/').get((req, res) => {
   data-client_id="259494879046-t6ejuqrlbmgdlqotrkes0fgev4iak86e.apps.googleusercontent.com"
   data-context="signin"
   data-ux_mode="popup"
-  data-login_uri="https://travel.up.railway.app/welcome"
+  data-login_uri="${process.env.URI}/welcome"
   data-auto_prompt="false">
 </div>
 
@@ -76,4 +78,21 @@ app.route('/:username').get(async (req, res) => {
   }
 })
 
-app.listen(PORT, '0.0.0.0')
+async function verify(token) {
+  const ticket = await client.verifyIdToken({
+    idToken: token,
+    audience: process.env.OAUTH_CLIENT_ID,
+  })
+  const payload = ticket.getPayload()
+  const userid = payload['sub']
+  console.log(payload)
+}
+
+app.route('/welcome').post((req, res) => {
+  console.log(req.body)
+  const token = req.body.credential
+  verify(token).catch(console.error)
+  res.status(200).send({ 'Another one': 'DJ Khaled' })
+})
+
+app.listen(process.env.PORT, '0.0.0.0')
