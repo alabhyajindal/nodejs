@@ -1,31 +1,12 @@
 const fs = require('fs')
-const express = require('express')
 const dotenv = require('dotenv')
-const { Pool, Client } = require('pg')
+const express = require('express')
 const { OAuth2Client } = require('google-auth-library')
-
-const client = new OAuth2Client()
+const { getGeoJSON, upsertUser } = require('./models/profiles')
 
 dotenv.config()
 
-// pg
-const connectionString = process.env.CONNECTION_STRING
-async function getGeoJSON(username) {
-  const pool = new Pool({
-    connectionString,
-  })
-
-  const result = await pool.query(
-    `SELECT * FROM test WHERE username LIKE '%${username}%';`
-  )
-  const data = result.rows[0]
-  if (data?.geojson) {
-    return JSON.stringify(data?.geojson)
-  } else {
-    return 'null'
-  }
-}
-// pgend
+const client = new OAuth2Client()
 
 const app = express()
 app.use(express.urlencoded({ extended: true }))
