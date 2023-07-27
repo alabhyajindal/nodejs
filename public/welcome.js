@@ -5,6 +5,9 @@ const p = document.querySelector('p')
 const submit = document.querySelector('#submit')
 
 const URI = document.currentScript.getAttribute('uri')
+const email = document.currentScript.getAttribute('email')
+
+console.log(email)
 
 async function checkUsername() {
   const res = await fetch(`${URI}/api/profiles/check`, {
@@ -32,7 +35,7 @@ async function submitUsername() {
   const res = await fetch(`${URI}/api/profiles/submit`, {
     method: 'POST',
     body: JSON.stringify({
-      email: '${email}',
+      email,
       username: input.value,
     }),
     headers: {

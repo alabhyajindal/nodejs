@@ -24,10 +24,6 @@ const htmlFile = fs.readFileSync(`${__dirname}/index.html`, 'utf-8')
 let jsFile = fs.readFileSync(`${__dirname}/script.js`, 'utf-8')
 jsFile = `mapboxgl.accessToken = '${process.env.MAPBOX_TOKEN}'\n` + jsFile
 
-app.route('/').get((req, res) => {
-  res.render('home', { uri: process.env.URI })
-})
-
 async function verify(token) {
   const ticket = await client.verifyIdToken({
     idToken: token,
@@ -38,20 +34,27 @@ async function verify(token) {
   return payload
 }
 
+app.route('/').get((req, res) => {
+  res.render('home', { uri: process.env.URI })
+})
+
 app.route('/redirect').post(async (req, res) => {
   const token = req.body.credential
   const userDetails = await verify(token)
-  const response = await getUsername(userDetails.email)
+
+  const email = userDetails.email
+  const response = await getUsername(email)
+
   if (!response.username) {
-    res.redirect('/welcome')
+    res.redirect('/welcome?email=' + encodeURIComponent(email))
   } else {
-    res.redirect(`/${response.username}`)
+    res.redirect('/' + response.username)
   }
 })
 
 app.route('/welcome').get(async (req, res) => {
-  const email = ''
-  res.render('welcome', { uri: process.env.URI })
+  const email = req.query.email
+  res.render('welcome', { uri: process.env.URI, email })
 })
 
 app.route('/:username').get(async (req, res) => {
