@@ -23,11 +23,11 @@ async function checkUsername() {
 
 function displayMessage(isAvailable) {
   if (isAvailable) {
-    p.textContent = 'Username is available'
-    submit.style.display = 'block'
+    p.textContent = `${input.value} is available`
+    submit.style.visibility = 'visible'
   } else {
-    p.textContent = 'Username is not available'
-    submit.style.display = 'none'
+    p.textContent = `${input.value} is not available`
+    submit.style.visibility = 'hidden'
   }
 }
 
