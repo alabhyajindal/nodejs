@@ -16,7 +16,7 @@ button {
 }
 
 .marker {
-  background-color: #d138bf;
+  background-color: #1971c2;
   width: 5px;
   height: 5px;
   border-radius: 50%;
@@ -24,7 +24,7 @@ button {
 }
 
 .last-marker {
-  background-color: #44ccff;
+  background-color: #1971c2;
 }
 
 #edit {
@@ -41,8 +41,8 @@ button {
 .modal {
   position: absolute;
   font-family: sans-serif;
-  background-color: #111;
-  color: #eee;
+  background-color: #eee;
+  color: #111;
   padding: 8px 16px;
   border-radius: 2px;
   margin-left: 6px;
