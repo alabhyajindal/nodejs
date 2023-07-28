@@ -4,7 +4,7 @@
   "description": "App to record travels",
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon server.js",
+    "dev": "nodemon --ext js,css,pug server.js",
     "start": "node server.js"
   },
   "author": "Alabhya Jindal",
@@ -17,5 +17,8 @@
     "mapbox-gl": "^2.15.0",
     "pg": "^8.11.1",
     "pug": "^3.0.2"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
   }
 }

@@ -2,23 +2,28 @@ doctype html
 html(lang='en')
   head
     title Travel Log
+    link(href="./home.css" rel='stylesheet')
   body
     script(src="https://accounts.google.com/gsi/client" async)
     div
-      p Get a personal travel log
-      div#g_id_onload(
-        data-client_id="259494879046-t6ejuqrlbmgdlqotrkes0fgev4iak86e.apps.googleusercontent.com"
-        data-context="signin"
-        data-ux_mode="popup"
-        data-login_uri= uri + "/redirect"
-        data-auto_prompt="false"
-      )
-      div.g_id_signin(
-        data-type="standard"
-        data-shape="rectangular"
-        data-theme="outline"
-        data-text="continue_with"
-        data-size="large"
-        data-logo_alignment="left"
-      )
+      header
+        h1 Travel.me
+        div#g_id_onload(
+          data-client_id="259494879046-t6ejuqrlbmgdlqotrkes0fgev4iak86e.apps.googleusercontent.com"
+          data-context="signin"
+          data-ux_mode="popup"
+          data-login_uri= uri + "/redirect"
+          data-auto_prompt="false"
+        )
+        div.g_id_signin(
+          data-type="standard"
+          data-shape="rectangular"
+          data-theme="outline"
+          data-text="continue_with"
+          data-size="large"
+          data-logo_alignment="left"
+        )
+      main
+        img(src='./hero.png', width='100%')
+        p Get a personal travel log
 

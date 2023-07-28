@@ -1,0 +1,21 @@
+body {
+  font-family: sans-serif;
+  color: #1e1e1e;
+  max-width: 800px;
+  margin: 0 auto;
+  background-color: whitesmoke;
+}
+
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+img {
+  border-radius: 2px;
+}
+
+p {
+  text-align: center;
+}

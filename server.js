@@ -99,4 +99,6 @@ app.route('/api/profiles/submit').post(async (req, res) => {
   }
 })
 
-app.listen(process.env.PORT, '0.0.0.0')
+app.listen(process.env.PORT, '0.0.0.0', () => {
+  console.log(`Listening on ${process.env.URI}`)
+})
