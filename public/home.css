@@ -1,6 +1,6 @@
 body {
   font-family: sans-serif;
-  max-width: 60%;
+  max-width: 800px;
   margin: 0 auto;
   color: #1e1e1e;
   background-color: whitesmoke;
@@ -21,4 +21,38 @@ main {
 img {
   max-width: 100%;
   border-radius: 2px;
+}
+
+#small {
+  display: none;
+}
+
+#main-login {
+  display: none;
+}
+
+@media (max-width: 1000px) {
+  body {
+    margin: 0px 24px;
+  }
+
+  header {
+    justify-content: center;
+  }
+
+  #header-login {
+    display: none;
+  }
+
+  #main-login {
+    display: block;
+  }
+
+  #large {
+    display: none;
+  }
+
+  #small {
+    display: block;
+  }
 }
