@@ -73,6 +73,7 @@ input.addEventListener('keydown', (e) => inputHandler(e))
 function toggleModal() {
   modal.classList.toggle('hidden')
   editButton.classList.toggle('hidden')
+  console.log(geojson)
 }
 
 async function inputHandler(e) {

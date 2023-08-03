@@ -1,10 +1,6 @@
-const { Pool, Client } = require('pg')
+const pool = require('../db')
 
 module.exports.getGeoJSON = async (username) => {
-  const pool = new Pool({
-    connectionString: process.env.CONNECTION_STRING,
-  })
-
   const result = await pool.query(
     `SELECT * FROM profiles WHERE username LIKE '%${username}%';`
   )
@@ -17,9 +13,6 @@ module.exports.getGeoJSON = async (username) => {
 }
 
 module.exports.addUser = async (values) => {
-  const pool = new Pool({
-    connectionString: process.env.CONNECTION_STRING,
-  })
   const text = `INSERT INTO profiles(email, name, username, geojson) 
   VALUES($1, $2, $3, $4)
   ON CONFLICT (email) 
@@ -33,9 +26,6 @@ module.exports.addUser = async (values) => {
 }
 
 module.exports.getUsername = async (email) => {
-  const pool = new Pool({
-    connectionString: process.env.CONNECTION_STRING,
-  })
   const text = 'SELECT * FROM profiles WHERE email = $1;'
   const values = [email]
 
@@ -48,9 +38,6 @@ module.exports.getUsername = async (email) => {
   }
 }
 module.exports.checkUsername = async (username) => {
-  const pool = new Pool({
-    connectionString: process.env.CONNECTION_STRING,
-  })
   const text = 'SELECT * FROM profiles WHERE username = $1;'
   const values = [username]
 
@@ -68,9 +55,6 @@ module.exports.checkUsername = async (username) => {
 }
 
 module.exports.submitUsername = async (values) => {
-  const pool = new Pool({
-    connectionString: process.env.CONNECTION_STRING,
-  })
   const text = `UPDATE profiles
   SET username = $1,
   geojson = $2
