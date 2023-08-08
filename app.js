@@ -1,5 +1,6 @@
 const fs = require('fs')
 const express = require('express')
+const cookieParser = require('cookie-parser')
 const { OAuth2Client } = require('google-auth-library')
 const {
   getGeoJSON,
@@ -12,6 +13,7 @@ const {
 const app = express()
 const client = new OAuth2Client()
 
+app.use(cookieParser())
 app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
 app.use(express.static('public'))
@@ -39,15 +41,21 @@ app
   })
   .post(async (req, res) => {
     const token = req.body.credential
+    const cookieToken = req.cookies['g_csrf_token']
+    const bodyToken = req.body['g_csrf_token']
+    console.log(cookieToken, bodyToken)
+    if (cookieToken !== bodyToken) {
+      res.status(400).send(`<body><script>alert('Bad request')</script></body>`)
+    }
     const userDetails = await verify(token)
-
     const email = userDetails.email
     const response = await getUsername(email)
 
     if (!response.username) {
       res.redirect('/welcome?email=' + encodeURIComponent(email))
     } else {
-      res.redirect('/' + response.username)
+      // res.redirect('/' + response.username)
+      res.redirect('/')
     }
   })
 
