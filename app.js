@@ -32,23 +32,24 @@ async function verify(token) {
   return payload
 }
 
-app.route('/').get((req, res) => {
-  res.render('home', { uri: process.env.URI })
-})
+app
+  .route('/')
+  .get((req, res) => {
+    res.render('home', { uri: process.env.URI })
+  })
+  .post(async (req, res) => {
+    const token = req.body.credential
+    const userDetails = await verify(token)
 
-app.route('/redirect').post(async (req, res) => {
-  const token = req.body.credential
-  const userDetails = await verify(token)
+    const email = userDetails.email
+    const response = await getUsername(email)
 
-  const email = userDetails.email
-  const response = await getUsername(email)
-
-  if (!response.username) {
-    res.redirect('/welcome?email=' + encodeURIComponent(email))
-  } else {
-    res.redirect('/' + response.username)
-  }
-})
+    if (!response.username) {
+      res.redirect('/welcome?email=' + encodeURIComponent(email))
+    } else {
+      res.redirect('/' + response.username)
+    }
+  })
 
 app.route('/welcome').get(async (req, res) => {
   const email = req.query.email
