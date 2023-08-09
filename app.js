@@ -59,10 +59,20 @@ app
     }
   })
 
-app.route('/welcome').get(async (req, res) => {
+app.route('/welcome').get((req, res) => {
   const email = req.query.email
   res.render('welcome', { uri: process.env.URI, email })
 })
+
+app
+  .route('/register')
+  .get((req, res) => {
+    res.render('register')
+  })
+  .post((req, res) => {
+    const data = req.body
+    res.send(data)
+  })
 
 app.route('/:username').get(async (req, res) => {
   const { username } = req.params
