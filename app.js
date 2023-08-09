@@ -1,6 +1,7 @@
 const fs = require('fs')
 const express = require('express')
 const cookieParser = require('cookie-parser')
+const mongoose = require('mongoose')
 const { OAuth2Client } = require('google-auth-library')
 const {
   getGeoJSON,
@@ -9,9 +10,14 @@ const {
   submitUsername,
   getUsername,
 } = require('./models/profiles')
+const User = require('./models/User')
 
 const app = express()
 const client = new OAuth2Client()
+
+mongoose.connect(
+  `mongodb+srv://alabhya10:${process.env.MONGODB_PASSWORD}@cluster0.pqhtd9a.mongodb.net/?retryWrites=true&w=majority`
+)
 
 app.use(cookieParser())
 app.use(express.json())
@@ -70,8 +76,9 @@ app
     res.render('register')
   })
   .post((req, res) => {
-    const data = req.body
-    res.send(data)
+    const user = new User(req.body)
+    user.save()
+    res.status(200).send('hiiiii')
   })
 
 app.route('/:username').get(async (req, res) => {
