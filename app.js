@@ -2,6 +2,7 @@ const fs = require('fs')
 const express = require('express')
 const cookieParser = require('cookie-parser')
 const mongoose = require('mongoose')
+const session = require('express-session')
 const { OAuth2Client } = require('google-auth-library')
 const {
   getGeoJSON,
@@ -23,6 +24,18 @@ app.use(cookieParser())
 app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
 app.use(express.static('public'))
+app.use(
+  session({
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+      httpOnly: true,
+      // secure: true // enable in prod
+    },
+    maxAge: 60 * 30 * 100,
+  })
+)
 
 app.set('view engine', 'pug')
 
@@ -49,7 +62,6 @@ app
     const token = req.body.credential
     const cookieToken = req.cookies['g_csrf_token']
     const bodyToken = req.body['g_csrf_token']
-    console.log(cookieToken, bodyToken)
     if (cookieToken !== bodyToken) {
       res.status(400).send(`<body><script>alert('Bad request')</script></body>`)
     }
@@ -70,7 +82,16 @@ app.route('/welcome').get((req, res) => {
   res.render('welcome', { uri: process.env.URI, email })
 })
 
-app.route('/dashboard').get((req, res) => {
+app.route('/dashboard').get(async (req, res) => {
+  if (!req.session.userId) {
+    res.redirect('login')
+  }
+
+  const user = await User.findById(req.session.userId)
+  if (!user) {
+    res.redirect('login')
+  }
+
   res.render('dashboard')
 })
 
@@ -92,10 +113,10 @@ app
   })
   .post(async (req, res) => {
     const user = await User.findOne({ email: req.body.email })
-    console.log(user)
     if (user === null || user.password !== req.body.password) {
       return res.render('login', { error: 'Incorrect email/password' })
     }
+    req.session.userId = user._id
     res.redirect('/dashboard')
   })
 
