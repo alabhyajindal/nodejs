@@ -3,6 +3,7 @@ const express = require('express')
 const cookieParser = require('cookie-parser')
 const mongoose = require('mongoose')
 const session = require('express-session')
+const bcrypt = require('bcryptjs')
 const { OAuth2Client } = require('google-auth-library')
 const {
   getGeoJSON,
@@ -84,12 +85,12 @@ app.route('/welcome').get((req, res) => {
 
 app.route('/dashboard').get(async (req, res) => {
   if (!req.session.userId) {
-    res.redirect('login')
+    return res.redirect('/login')
   }
 
   const user = await User.findById(req.session.userId)
   if (!user) {
-    res.redirect('login')
+    return res.redirect('/login')
   }
 
   res.render('dashboard')
@@ -101,8 +102,17 @@ app
     res.render('register')
   })
   .post((req, res) => {
-    const user = new User(req.body)
-    user.save()
+    bcrypt.genSalt(10, (err1, salt) => {
+      bcrypt.hash(req.body.password, salt, (err2, hash) => {
+        if (err1 || err2) {
+          return res.render('register', {
+            error: 'Something went wrong. Please try later.',
+          })
+        }
+        const user = new User({ ...req.body, password: hash })
+        user.save()
+      })
+    })
     res.redirect('/dashboard')
   })
 

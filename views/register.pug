@@ -4,6 +4,9 @@ block variables
   - const title = "Register"
 
 block body 
+  if error 
+    p ERROR: #{error}
+
   h1 Create an account
   form(method="post")
     span First Name
