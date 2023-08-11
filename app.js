@@ -70,6 +70,10 @@ app.route('/welcome').get((req, res) => {
   res.render('welcome', { uri: process.env.URI, email })
 })
 
+app.route('/dashboard').get((req, res) => {
+  res.render('dashboard')
+})
+
 app
   .route('/register')
   .get((req, res) => {
@@ -78,7 +82,21 @@ app
   .post((req, res) => {
     const user = new User(req.body)
     user.save()
-    res.status(200).send('hiiiii')
+    res.redirect('/dashboard')
+  })
+
+app
+  .route('/login')
+  .get((req, res) => {
+    res.render('login')
+  })
+  .post(async (req, res) => {
+    const user = await User.findOne({ email: req.body.email })
+    console.log(user)
+    if (user === null || user.password !== req.body.password) {
+      return res.render('login', { error: 'Incorrect email/password' })
+    }
+    res.redirect('/dashboard')
   })
 
 app.route('/:username').get(async (req, res) => {
