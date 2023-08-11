@@ -123,9 +123,11 @@ app
   })
   .post(async (req, res) => {
     const user = await User.findOne({ email: req.body.email })
-    if (user === null || user.password !== req.body.password) {
-      return res.render('login', { error: 'Incorrect email/password' })
-    }
+    bcrypt.compare(req.body.password, user.password, (err, res) => {
+      if (user === null || res === false) {
+        return res.render('login', { error: 'Incorrect email/password' })
+      }
+    })
     req.session.userId = user._id
     res.redirect('/dashboard')
   })
