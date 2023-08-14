@@ -29,6 +29,23 @@ app.use(
   })
 )
 
+app.use(async (req, res, next) => {
+  if (!(req.session && req.session.userId)) {
+    return next()
+  }
+
+  const user = await User.findById(req.session.userId)
+  if (!user) {
+    return next()
+  }
+
+  user.password = undefined
+  req.user = user
+  res.locals.user = user
+
+  next()
+})
+
 app.set('view engine', 'pug')
 
 const htmlFile = fs.readFileSync(`${__dirname}/index.html`, 'utf-8')
