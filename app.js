@@ -61,16 +61,14 @@ app.route('/welcome').get((req, res) => {
   res.render('welcome', { uri: process.env.URI, email })
 })
 
-app.route('/dashboard').get(async (req, res) => {
-  if (!req.session.userId) {
+function loginRequired(req, res, next) {
+  if (!req.user) {
     return res.redirect('/login')
   }
+  next()
+}
 
-  const user = await User.findById(req.session.userId)
-  if (!user) {
-    return res.redirect('/login')
-  }
-
+app.route('/dashboard').get(loginRequired, async (req, res) => {
   res.render('dashboard')
 })
 
