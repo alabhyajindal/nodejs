@@ -4,6 +4,7 @@ const cookieParser = require('cookie-parser')
 const mongoose = require('mongoose')
 const session = require('express-session')
 const bcrypt = require('bcryptjs')
+const helmet = require('helmet')
 const User = require('./models/User')
 
 const app = express()
@@ -12,6 +13,7 @@ mongoose.connect(
   `mongodb+srv://alabhya10:${process.env.MONGODB_PASSWORD}@cluster0.pqhtd9a.mongodb.net/?retryWrites=true&w=majority`
 )
 
+app.use(helmet())
 app.use(cookieParser())
 app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
@@ -23,7 +25,7 @@ app.use(
     saveUninitialized: false,
     cookie: {
       httpOnly: true,
-      // secure: true // enable in prod
+      // secure: true, // enable in prod
     },
     maxAge: 60 * 30 * 100,
   })

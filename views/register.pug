@@ -8,6 +8,12 @@ block body
     p ERROR: #{error}
 
   h1 Create an account
+  span Or 
+  a(href='/login') login
+  br
+  br
+
+
   form(method="post")
     span First Name
     input(type="text", name="firstName", required=true)
