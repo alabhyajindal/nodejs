@@ -84,8 +84,11 @@ app
   })
   .post(async (req, res) => {
     const user = await User.findOne({ email: req.body.email })
+    if (!user) {
+      return res.render('login', { error: 'Incorrect email/password' })
+    }
     bcrypt.compare(req.body.password, user.password, (err, res) => {
-      if (user === null || res === false) {
+      if (res === false) {
         return res.render('login', { error: 'Incorrect email/password' })
       }
     })
