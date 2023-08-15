@@ -5,6 +5,7 @@ const mongoose = require('mongoose')
 const session = require('express-session')
 const bcrypt = require('bcryptjs')
 const helmet = require('helmet')
+const morgan = require('morgan')
 const User = require('./models/User')
 
 const app = express()
@@ -13,6 +14,7 @@ mongoose.connect(
   `mongodb+srv://alabhya10:${process.env.MONGODB_PASSWORD}@cluster0.pqhtd9a.mongodb.net/?retryWrites=true&w=majority`
 )
 
+app.use(morgan('dev'))
 app.use(helmet())
 app.use(cookieParser())
 app.use(express.json())
@@ -104,13 +106,14 @@ app
     if (!user) {
       return res.render('login', { error: 'Incorrect email/password' })
     }
-    bcrypt.compare(req.body.password, user.password, (err, response) => {
+    return bcrypt.compare(req.body.password, user.password, (err, response) => {
       if (response === false) {
         return res.render('login', { error: 'Incorrect email/password' })
+      } else {
+        req.session.userId = user._id
+        res.redirect('/dashboard')
       }
     })
-    req.session.userId = user._id
-    res.redirect('/dashboard')
   })
 
 app.route('/logout').post((req, res) => {
