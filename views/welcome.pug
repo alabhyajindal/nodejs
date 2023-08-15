@@ -4,8 +4,10 @@ block variables
   - const title = "Welcome!"
 
 block body 
-
   h1 Choose a username
+
+  if error 
+    p ERROR: #{error}
 
   form(method="post")
     span username 

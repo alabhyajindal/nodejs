@@ -7,6 +7,7 @@ const bcrypt = require('bcryptjs')
 const helmet = require('helmet')
 const morgan = require('morgan')
 const User = require('./models/User')
+const Geo = require('./models/Geo')
 
 const app = express()
 
@@ -60,9 +61,19 @@ app.route('/').get((req, res) => {
   res.render('home', { uri: process.env.URI })
 })
 
-app.route('/welcome').get(loginRequired, (req, res) => {
-  res.render('welcome')
-})
+app
+  .route('/welcome')
+  .get(loginRequired, (req, res) => {
+    res.render('welcome')
+  })
+  .post(async (req, res) => {
+    const find = await Geo.find({ username: req.body.username })
+    if (find.length === 0) {
+      return res.render('welcome', { error: 'Username available' })
+    } else {
+      return res.render('welcome', { error: 'Username NOT available' })
+    }
+  })
 
 function loginRequired(req, res, next) {
   if (!req.user) {
