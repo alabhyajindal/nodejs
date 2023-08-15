@@ -104,13 +104,19 @@ app
     if (!user) {
       return res.render('login', { error: 'Incorrect email/password' })
     }
-    bcrypt.compare(req.body.password, user.password, (err, res) => {
-      if (res === false) {
+    bcrypt.compare(req.body.password, user.password, (err, response) => {
+      if (response === false) {
         return res.render('login', { error: 'Incorrect email/password' })
       }
     })
     req.session.userId = user._id
     res.redirect('/dashboard')
   })
+
+app.route('/logout').post((req, res) => {
+  req.session.userId = null
+  res.locals.user = null
+  res.redirect('/')
+})
 
 module.exports = app

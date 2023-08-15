@@ -6,11 +6,15 @@ html(lang='en')
     title Travel Log
     link(rel='stylesheet' href="./css/home.css")
   body
-    script(src="https://accounts.google.com/gsi/client" async)
     div
       header
         h1 Travel Log 
-        a(href='./login') Login
+        if !user
+          a(href='./login') Login
+        else 
+          span Hello #{user.firstName}
+          form(method="post", action="/logout", value="Logout")
+            input(type='submit')
       main
         img#large(src='./images/hero.png')
         img#small(src='./images/hero-mobile.png')
