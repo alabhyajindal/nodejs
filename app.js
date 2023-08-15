@@ -60,9 +60,8 @@ app.route('/').get((req, res) => {
   res.render('home', { uri: process.env.URI })
 })
 
-app.route('/welcome').get((req, res) => {
-  const email = req.query.email
-  res.render('welcome', { uri: process.env.URI, email })
+app.route('/welcome').get(loginRequired, (req, res) => {
+  res.render('welcome')
 })
 
 function loginRequired(req, res, next) {
