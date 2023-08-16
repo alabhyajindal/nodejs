@@ -1,4 +1,3 @@
-const fs = require('fs')
 const express = require('express')
 const cookieParser = require('cookie-parser')
 const mongoose = require('mongoose')
@@ -68,15 +67,7 @@ async function usernameChosen(req, res, next) {
 
 app.set('view engine', 'pug')
 
-const htmlFile = fs.readFileSync(`${__dirname}/index.html`, 'utf-8')
-const jsFile = fs.readFileSync(`${__dirname}/script.js`, 'utf-8')
-
 app.route('/test').get(async (req, res) => {
-  const withScript = htmlFile.replace(
-    '</body>',
-    `<script type="module">${jsFile}</script></body>`
-  )
-  // res.status(200).send(withScript)
   res.render('username')
 })
 
