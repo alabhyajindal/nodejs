@@ -16,7 +16,7 @@ mongoose.connect(
 )
 
 app.use(morgan('dev'))
-app.use(helmet())
+// app.use(helmet()) // getting issues with Mapbox because of this
 app.use(cookieParser())
 app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
@@ -69,8 +69,16 @@ async function usernameChosen(req, res, next) {
 app.set('view engine', 'pug')
 
 const htmlFile = fs.readFileSync(`${__dirname}/index.html`, 'utf-8')
-let jsFile = fs.readFileSync(`${__dirname}/script.js`, 'utf-8')
-jsFile = `mapboxgl.accessToken = '${process.env.MAPBOX_TOKEN}'\n` + jsFile
+const jsFile = fs.readFileSync(`${__dirname}/script.js`, 'utf-8')
+
+app.route('/test').get(async (req, res) => {
+  // const withGeoJSON = `\nconst geojson = ${geoJSON}\n` + jsFile
+  const withScript = htmlFile.replace(
+    '</body>',
+    `<script type="module">${jsFile}</script></body>`
+  )
+  res.status(200).send(withScript)
+})
 
 app.route('/').get((req, res) => {
   res.render('home', { uri: process.env.URI })

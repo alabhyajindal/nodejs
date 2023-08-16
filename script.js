@@ -1,6 +1,9 @@
-if (!geojson) {
-  alert('This username does not exist')
-  throw new Error()
+mapboxgl.accessToken =
+  'pk.eyJ1IjoiYWxhYmh5YWppbmRhbCIsImEiOiJjbGxkeWoxdzkwbW03M2NrYXRmemlxbnE5In0.ysZJru5vWNx536ceoWBX5g'
+
+const geojson = {
+  type: 'FeatureCollection',
+  features: [],
 }
 
 const map = new mapboxgl.Map({
