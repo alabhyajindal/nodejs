@@ -51,6 +51,21 @@ app.use(async (req, res, next) => {
   next()
 })
 
+function loginRequired(req, res, next) {
+  if (!req.user) {
+    return res.redirect('/login')
+  }
+  next()
+}
+
+async function usernameChosen(req, res, next) {
+  const geo = await Geo.find({ user_id: req.user._id })
+  if (geo.length === 1) {
+    return res.redirect('/dashboard')
+  }
+  next()
+}
+
 app.set('view engine', 'pug')
 
 const htmlFile = fs.readFileSync(`${__dirname}/index.html`, 'utf-8')
@@ -60,14 +75,6 @@ jsFile = `mapboxgl.accessToken = '${process.env.MAPBOX_TOKEN}'\n` + jsFile
 app.route('/').get((req, res) => {
   res.render('home', { uri: process.env.URI })
 })
-
-async function usernameChosen(req, res, next) {
-  const geo = await Geo.find({ user_id: req.user._id })
-  if (geo.length === 1) {
-    return res.redirect('/dashboard')
-  }
-  next()
-}
 
 app
   .route('/welcome')
@@ -90,13 +97,6 @@ app
       return res.render('welcome', { error: 'Username NOT available' })
     }
   })
-
-function loginRequired(req, res, next) {
-  if (!req.user) {
-    return res.redirect('/login')
-  }
-  next()
-}
 
 app.route('/dashboard').get(loginRequired, async (req, res) => {
   res.render('dashboard')
