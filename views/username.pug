@@ -5,10 +5,9 @@ block variables
 
 block head 
   script(src="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js")
-  link(href="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css", rel="stylesheet")
-  link(href="./css/app.css", rel="stylesheet")
-  script(type="module", src="./js/username.js")
-
+  link(href="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css" rel="stylesheet")
+  link(href="./css/app.css" rel="stylesheet")
+  script(type="module" src="./js/username.js", geojson=`${geojson}`)
 
 block body 
   div#map

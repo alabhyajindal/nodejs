@@ -67,8 +67,11 @@ async function usernameChosen(req, res, next) {
 
 app.set('view engine', 'pug')
 
-app.route('/test').get(async (req, res) => {
-  res.render('username')
+app.route('/:username').get(async (req, res) => {
+  const geo = await Geo.find({ username: req.params.username })
+  console.log(geo)
+  res.render('username', { geojson: geo[0].geo })
+  // res.status(200).send('niggaaaaaaaa!!!!')
 })
 
 app.route('/').get((req, res) => {
@@ -84,7 +87,6 @@ app
     const find = await Geo.find({ username: req.body.username })
     if (find.length === 0) {
       // dynamic routing needs to be added here
-      console.log(req.user)
       const geo = new Geo({
         user_id: req.user._id,
         username: req.body.username,
