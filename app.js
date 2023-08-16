@@ -61,14 +61,30 @@ app.route('/').get((req, res) => {
   res.render('home', { uri: process.env.URI })
 })
 
+async function usernameChosen(req, res, next) {
+  const geo = await Geo.find({ user_id: req.user._id })
+  if (geo.length === 1) {
+    return res.redirect('/dashboard')
+  }
+  next()
+}
+
 app
   .route('/welcome')
-  .get(loginRequired, (req, res) => {
+  .get(loginRequired, usernameChosen, (req, res) => {
     res.render('welcome')
   })
   .post(async (req, res) => {
     const find = await Geo.find({ username: req.body.username })
     if (find.length === 0) {
+      // dynamic routing needs to be added here
+      console.log(req.user)
+      const geo = new Geo({
+        user_id: req.user._id,
+        username: req.body.username,
+        geo: '{"type":"FeatureCollection","features":[]}',
+      })
+      geo.save()
       return res.render('welcome', { error: 'Username available' })
     } else {
       return res.render('welcome', { error: 'Username NOT available' })
@@ -121,7 +137,7 @@ app
         return res.render('login', { error: 'Incorrect email/password' })
       } else {
         req.session.userId = user._id
-        res.redirect('/dashboard')
+        res.redirect('/welcome')
       }
     })
   })
