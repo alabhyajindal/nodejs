@@ -1,0 +1,24 @@
+extends base 
+
+block variables 
+  - const title = "Username"
+
+block head 
+  script(src="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js")
+  link(href="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css", rel="stylesheet")
+  link(href="./css/app.css", rel="stylesheet")
+  script(type="module", src="./js/username.js")
+
+
+block body 
+  div#map
+  button#edit Edit 
+  section(class="modal hidden")
+    div#search-container
+      input#input(placeholder="Search")
+      div#suggestions-container
+
+    div#your-places
+      h3 Your Places 
+      div#places
+      button#done Done 

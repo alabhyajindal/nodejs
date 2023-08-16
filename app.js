@@ -72,12 +72,12 @@ const htmlFile = fs.readFileSync(`${__dirname}/index.html`, 'utf-8')
 const jsFile = fs.readFileSync(`${__dirname}/script.js`, 'utf-8')
 
 app.route('/test').get(async (req, res) => {
-  // const withGeoJSON = `\nconst geojson = ${geoJSON}\n` + jsFile
   const withScript = htmlFile.replace(
     '</body>',
     `<script type="module">${jsFile}</script></body>`
   )
-  res.status(200).send(withScript)
+  // res.status(200).send(withScript)
+  res.render('username')
 })
 
 app.route('/').get((req, res) => {
