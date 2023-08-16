@@ -71,7 +71,6 @@ app.route('/:username').get(async (req, res) => {
   const geo = await Geo.find({ username: req.params.username })
   console.log(geo)
   res.render('username', { geojson: geo[0].geo })
-  // res.status(200).send('niggaaaaaaaa!!!!')
 })
 
 app.route('/').get((req, res) => {
