@@ -7,6 +7,7 @@ const User = mongoose.model(
     lastName: { type: String, required: true },
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
+    emailVerified: { type: Boolean, required: true },
   })
 )
 

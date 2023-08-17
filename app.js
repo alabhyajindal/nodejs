@@ -5,6 +5,7 @@ const session = require('express-session')
 const bcrypt = require('bcryptjs')
 const helmet = require('helmet')
 const morgan = require('morgan')
+const postmark = require('postmark')
 const User = require('./models/User')
 const Geo = require('./models/Geo')
 
@@ -111,11 +112,29 @@ app
             error: 'Something went wrong. Please try later.',
           })
         }
-        const user = new User({ ...req.body, password: hash })
+        const user = new User({
+          ...req.body,
+          password: hash,
+          emailVerified: false,
+        })
         await user.save()
+        const client = new postmark.ServerClient(
+          '20942814-c5a1-4300-aa53-fb99e98f0f3c'
+        )
+        client.sendEmail({
+          From: 'aj@alabhyajindal.com',
+          To: 'auratice@alabhyajindal.com',
+          Subject: 'Verify your email for Travel Log',
+          TextBody:
+            'Hello from Travel Log! Verify your email address by clicking this link: https://www.google.com',
+        })
       })
     })
-    res.redirect('/')
+    res
+      .status(200)
+      .send(
+        "<script>alert('Check your email for a confirmation mail')</script>"
+      )
   })
 
 app
