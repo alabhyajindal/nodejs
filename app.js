@@ -60,7 +60,7 @@ function loginRequired(req, res, next) {
 async function usernameChosen(req, res, next) {
   const geo = await Geo.find({ user_id: req.user._id })
   if (geo.length === 1) {
-    return res.redirect('/dashboard')
+    return res.redirect(`/${geo.username}`)
   }
   next()
 }
@@ -85,16 +85,12 @@ app
         username: req.body.username,
         geo: '{"type":"FeatureCollection","features":[]}',
       })
-      geo.save()
-      return res.render('welcome', { error: 'Username available' })
+      await geo.save()
+      return res.redirect(`/${req.body.username}`)
     } else {
       return res.render('welcome', { error: 'Username NOT available' })
     }
   })
-
-app.route('/dashboard').get(loginRequired, async (req, res) => {
-  res.render('dashboard')
-})
 
 app
   .route('/register')
@@ -103,17 +99,17 @@ app
   })
   .post((req, res) => {
     bcrypt.genSalt(10, (err1, salt) => {
-      bcrypt.hash(req.body.password, salt, (err2, hash) => {
+      bcrypt.hash(req.body.password, salt, async (err2, hash) => {
         if (err1 || err2) {
           return res.render('register', {
             error: 'Something went wrong. Please try later.',
           })
         }
         const user = new User({ ...req.body, password: hash })
-        user.save()
+        await user.save()
       })
     })
-    res.redirect('/dashboard')
+    res.redirect('/')
   })
 
 app
