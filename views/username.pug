@@ -9,7 +9,8 @@ block head
   link(href="./css/app.css" rel="stylesheet")
   script.
     const geojson = !{geojson};
-  script(type="module" src="./js/username.js")
+  if !isOwner
+    script(type="module" src="./js/username.js")
 
 block body 
   div#map

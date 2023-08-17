@@ -161,7 +161,6 @@ app.route('/:username').get(async (req, res) => {
     isOwner:
       req.user?._id &&
       req.user._id.equals(new mongoose.Types.ObjectId(geo.user_id)),
-    isOwner: true,
   }
 
   console.log(options)

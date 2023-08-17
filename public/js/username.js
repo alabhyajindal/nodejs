@@ -56,5 +56,4 @@ function drawLines(toUpdate = false) {
 map.on('load', () => {
   drawPoints()
   drawLines()
-  updatePlacesList()
 })
