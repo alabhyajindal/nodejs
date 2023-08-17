@@ -1,7 +1,7 @@
 extends base 
 
 block variables 
-  - const title = "Username"
+  - const title = username
 
 block head 
   script(src="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js")
@@ -9,6 +9,8 @@ block head
   link(href="./css/app.css" rel="stylesheet")
   script.
     const geojson = !{geojson};
+    const isOwner = !{isOwner};
+    // move js to edit data in a different file, load that if isOwner
   script(type="module" src="./js/username.js", geojson=`${geojson}`)
 
 block body 

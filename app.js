@@ -127,7 +127,7 @@ app
         return res.render('login', { error: 'Incorrect email/password' })
       } else {
         req.session.userId = user._id
-        res.redirect('/welcome')
+        return res.redirect('/welcome')
       }
     })
   })
@@ -143,13 +143,14 @@ app.route('/404').get((req, res) => {
 })
 
 app.route('/:username').get(async (req, res) => {
-  const geo = await Geo.find({ username: req.params.username })
-  console.log(geo)
-  if (geo[0]?.geo) {
-    res.render('username', { geojson: geo[0].geo })
-  } else {
-    res.redirect('/404')
+  const [geo] = await Geo.find({ username: req.params.username })
+  const options = {
+    geojson: geo.geo,
+    username: req.params.username,
+    isOwner: req.user?._id === geo.user_id,
   }
+  console.log(options)
+  res.render('username', options)
 })
 
 module.exports = app
