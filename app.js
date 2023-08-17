@@ -67,12 +67,6 @@ async function usernameChosen(req, res, next) {
 
 app.set('view engine', 'pug')
 
-app.route('/:username').get(async (req, res) => {
-  const geo = await Geo.find({ username: req.params.username })
-  console.log(geo)
-  res.render('username', { geojson: geo[0].geo })
-})
-
 app.route('/').get((req, res) => {
   res.render('home', { uri: process.env.URI })
 })
@@ -146,6 +140,20 @@ app.route('/logout').post((req, res) => {
   req.session.userId = null
   res.locals.user = null
   res.redirect('/')
+})
+
+app.route('/404').get((req, res) => {
+  res.status(404).send('404 - Page not found')
+})
+
+app.route('/:username').get(async (req, res) => {
+  const geo = await Geo.find({ username: req.params.username })
+  console.log(geo)
+  if (geo[0]?.geo) {
+    res.render('username', { geojson: geo[0].geo })
+  } else {
+    res.redirect('/404')
+  }
 })
 
 module.exports = app
