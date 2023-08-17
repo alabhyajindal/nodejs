@@ -10,7 +10,9 @@ block head
   script.
     const geojson = !{geojson};
     // move js to edit data in a different file, load that if isOwner
-  script(type="module" src="./js/username.js", geojson=`${geojson}`)
+  script(type="module" src="./js/username.js")
+  //- if isOwner 
+    script(src="./js/usernameOwner.js")
 
 block body 
   div#map
