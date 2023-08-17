@@ -9,10 +9,7 @@ block head
   link(href="./css/app.css" rel="stylesheet")
   script.
     const geojson = !{geojson};
-    // move js to edit data in a different file, load that if isOwner
   script(type="module" src="./js/username.js")
-  //- if isOwner 
-    script(src="./js/usernameOwner.js")
 
 block body 
   div#map
@@ -27,3 +24,4 @@ block body
         h3 Your Places 
         div#places
         button#done Done 
+    script(src="./js/usernameOwner.js")
