@@ -9,19 +9,19 @@ block head
   link(href="./css/app.css" rel="stylesheet")
   script.
     const geojson = !{geojson};
-    const isOwner = !{isOwner};
     // move js to edit data in a different file, load that if isOwner
   script(type="module" src="./js/username.js", geojson=`${geojson}`)
 
 block body 
   div#map
-  button#edit Edit 
-  section(class="modal hidden")
-    div#search-container
-      input#input(placeholder="Search")
-      div#suggestions-container
+  if isOwner
+    button#edit Edit 
+    section(class="modal hidden")
+      div#search-container
+        input#input(placeholder="Search")
+        div#suggestions-container
 
-    div#your-places
-      h3 Your Places 
-      div#places
-      button#done Done 
+      div#your-places
+        h3 Your Places 
+        div#places
+        button#done Done 

@@ -58,14 +58,20 @@ function loginRequired(req, res, next) {
 }
 
 async function usernameChosen(req, res, next) {
-  const geo = await Geo.find({ user_id: req.user._id })
-  if (geo.length === 1) {
+  const [geo] = await Geo.find({ user_id: req.user._id })
+  if (geo?.username) {
     return res.redirect(`/${geo.username}`)
   }
   next()
 }
 
 app.set('view engine', 'pug')
+
+// Define a middleware to handle favicon requests
+app.use('/favicon.ico', (req, res) => {
+  // Send an empty 204 No Content response for favicon requests
+  res.status(204).end()
+})
 
 app.route('/').get((req, res) => {
   res.render('home', { uri: process.env.URI })
@@ -76,7 +82,7 @@ app
   .get(loginRequired, usernameChosen, (req, res) => {
     res.render('welcome')
   })
-  .post(async (req, res) => {
+  .post(loginRequired, usernameChosen, async (req, res) => {
     const find = await Geo.find({ username: req.body.username })
     if (find.length === 0) {
       // dynamic routing needs to be added here
@@ -115,6 +121,7 @@ app
 app
   .route('/login')
   .get((req, res) => {
+    console.log('fuck this another one')
     res.render('login')
   })
   .post(async (req, res) => {
@@ -144,11 +151,18 @@ app.route('/404').get((req, res) => {
 
 app.route('/:username').get(async (req, res) => {
   const [geo] = await Geo.find({ username: req.params.username })
+  console.log(req.params.username)
+  console.log(req.user?._id)
+  console.log(geo.user_id)
+
   const options = {
     geojson: geo.geo,
     username: req.params.username,
-    isOwner: req.user?._id === geo.user_id,
+    isOwner:
+      req.user?._id &&
+      req.user._id.equals(new mongoose.Types.ObjectId(geo.user_id)),
   }
+
   console.log(options)
   res.render('username', options)
 })
