@@ -66,12 +66,25 @@ const input = document.getElementById('input')
 const suggestionsDiv = document.getElementById('suggestions-container')
 editButton.addEventListener('click', (e) => toggleModal(e))
 doneButton.addEventListener('click', (e) => toggleModal(e))
+doneButton.addEventListener('click', (e) => save(e))
 input.addEventListener('keydown', (e) => inputHandler(e))
+
+async function save() {
+  const payload = JSON.stringify({ geojson, username })
+  const res = await fetch('http://localhost:3000/save', {
+    method: 'POST',
+    headers: {
+      'Content-type': 'application/json',
+    },
+    body: payload,
+  })
+  const body = await res.json()
+  console.log(body)
+}
 
 function toggleModal() {
   modal.classList.toggle('hidden')
   editButton.classList.toggle('hidden')
-  console.log(geojson)
 }
 
 async function inputHandler(e) {

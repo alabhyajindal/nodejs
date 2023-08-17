@@ -121,7 +121,6 @@ app
 app
   .route('/login')
   .get((req, res) => {
-    console.log('fuck this another one')
     res.render('login')
   })
   .post(async (req, res) => {
@@ -149,21 +148,26 @@ app.route('/404').get((req, res) => {
   res.status(404).send('404 - Page not found')
 })
 
+app.route('/save').post(async (req, res) => {
+  const updateRes = await Geo.updateOne(
+    { username: req.body.username },
+    { geo: JSON.stringify(req.body.geojson) }
+  )
+  console.log(updateRes)
+  res.status(200).send({ status: 'success' })
+})
+
 app.route('/:username').get(async (req, res) => {
   const [geo] = await Geo.find({ username: req.params.username })
-  console.log(req.params.username)
-  console.log(req.user?._id)
-  console.log(geo.user_id)
-
   const options = {
     geojson: geo.geo,
     username: req.params.username,
     isOwner:
       req.user?._id &&
       req.user._id.equals(new mongoose.Types.ObjectId(geo.user_id)),
+    isOwner: true,
   }
 
-  console.log(options)
   res.render('username', options)
 })
 

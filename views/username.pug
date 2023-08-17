@@ -9,6 +9,7 @@ block head
   link(href="./css/app.css" rel="stylesheet")
   script.
     const geojson = !{geojson};
+    const username = "!{username}";
   if !isOwner
     script(type="module" src="./js/username.js")
 
@@ -24,5 +25,5 @@ block body
       div#your-places
         h3 Your Places 
         div#places
-        button#done Done 
+        button#done Save
     script(src="./js/usernameOwner.js")
