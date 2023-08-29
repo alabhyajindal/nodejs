@@ -1,7 +1,7 @@
 extends base 
 
 block variables 
-  - const title = [...username].map((char, i) => i === 0 ? char.toUpperCase() : char ).join('')
+  - const title = [...username].map((char, i) => i === 0 ? char.toUpperCase() : char ).join('') + "'s travel log | atz"
 
 block head 
   script(src="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js")
