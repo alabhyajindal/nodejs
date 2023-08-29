@@ -3,7 +3,7 @@ mapboxgl.accessToken =
 
 const map = new mapboxgl.Map({
   container: 'map',
-  style: 'mapbox://styles/mapbox/light-v11',
+  style: 'mapbox://styles/mapbox/dark-v11',
   center: geojson.features[geojson.features.length - 1]?.geometry
     ?.coordinates || [14.421253, 50.087465],
   zoom: 3,
